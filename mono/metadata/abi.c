@@ -16,6 +16,18 @@ const static AbiDetails mono_abi_details = {	\
 
 #ifdef MONO_CROSS_COMPILE
 
+
+#define XSTR(x) STR(x)
+#define STR(x) #x
+
+#pragma message "The value of ABC: " XSTR(USED_CROSS_COMPILER_OFFSETS)
+#pragma message "The value of ABC: " XSTR(TARGET_ARM64)
+#pragma message "The value of ABC: " XSTR(TARGET_HORIZON)
+#pragma message "The value of ABC: " XSTR(HAVE_BOEHM_GC)
+#pragma message "The value of ABC: " XSTR(MONO_CROSS_COMPILE)
+#pragma message "The value of ABC: " XSTR(DISABLE_METADATA_OFFSETS)
+
+
 #if TARGET_WASM
 
 DECLARE_ABI_DETAILS (1, 2, 4, 8, 4, 8, 4)

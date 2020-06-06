@@ -136,6 +136,8 @@ and reduce the number of casts drastically.
 #endif
 #elif HOST_WIN32
 #define USE_WINDOWS_BACKEND
+#elif HOST_HORIZON
+#define USE_POSIX_BACKEND
 #else
 #error "no backend support for current platform"
 #endif /* defined (_POSIX_VERSION) */

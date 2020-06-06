@@ -722,6 +722,10 @@ mono_thread_internal_set_priority (MonoInternalThread *internal, MonoThreadPrior
 	g_assert (priority <= MONO_THREAD_PRIORITY_HIGHEST);
 	g_assert (MONO_THREAD_PRIORITY_LOWEST < MONO_THREAD_PRIORITY_HIGHEST);
 
+#ifdef HOST_HORIZON
+	return;
+#endif
+
 #ifdef HOST_WIN32
 	BOOL res;
 	DWORD last_error;
@@ -754,7 +758,7 @@ mono_thread_internal_set_priority (MonoInternalThread *internal, MonoThreadPrior
 	// When this API becomes available on an arbitrary thread, we can use it,
 	// not available on current Zircon
 	//
-#else /* !HOST_WIN32 and not HOST_FUCHSIA */
+#elif !defined(HOST_HORIZON) /* !HOST_WIN32 and not HOST_FUCHSIA */
 	pthread_t tid;
 	int policy;
 	struct sched_param param;

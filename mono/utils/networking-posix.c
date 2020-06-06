@@ -174,6 +174,20 @@ fetch_protocol (const char *proto_name, int *cache, int *proto, int default_val)
 	return *proto;
 }
 
+#else
+
+// lmao this is mega dumb
+static int
+fetch_protocol (const char *proto_name, int *cache, int *proto, int default_val)
+{
+	if(!*cache) {
+		*proto = default_val;
+		*cache = 1;
+	}
+
+	return *proto;
+}
+
 #endif
 
 int

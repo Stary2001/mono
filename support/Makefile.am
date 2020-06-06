@@ -5,10 +5,12 @@ else
 SUPPORT=libMonoSupportW.la
 endif
 
+if !HOST_HORIZON
 if BUILD_SUPPORT
 lib_LTLIBRARIES = 				\
 	libMonoPosixHelper.la			\
 	$(SUPPORT)
+endif
 endif
 
 AM_CPPFLAGS =					\

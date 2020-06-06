@@ -379,7 +379,7 @@ mono_native_thread_processor_id_get (void)
 
 #endif /* defined(_POSIX_VERSION) */
 
-#if defined(USE_POSIX_BACKEND)
+#if defined(USE_POSIX_BACKEND) && !defined(__SWITCH__)
 
 gboolean
 mono_threads_suspend_begin_async_suspend (MonoThreadInfo *info, gboolean interrupt_kernel)
@@ -452,5 +452,8 @@ void
 mono_threads_suspend_init (void)
 {
 }
+
+#elif defined(__SWITCH__)
+// Do thing
 
 #endif /* defined(USE_POSIX_BACKEND) */

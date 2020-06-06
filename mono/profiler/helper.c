@@ -26,6 +26,9 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #endif
+#ifdef HOST_HORIZON
+#include <arpa/inet.h>
+#endif
 
 #include "helper.h"
 

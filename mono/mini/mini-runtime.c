@@ -3485,6 +3485,8 @@ mono_is_addr_implicit_null_check (void *addr)
 	return addr <= GUINT_TO_POINTER (mono_target_pagesize ());
 }
 
+#ifndef HOST_HORIZON
+
 // This function is separate from mono_sigsegv_signal_handler
 // so debug_fault_addr can be seen in debugger stacks.
 #ifdef MONO_SIG_HANDLER_DEBUG
@@ -3644,6 +3646,7 @@ MONO_SIG_HANDLER_FUNC (, mono_sigint_signal_handler)
 
 	MONO_EXIT_GC_UNSAFE_UNBALANCED;
 }
+#endif
 
 #ifndef DISABLE_REMOTING
 /* mono_jit_create_remoting_trampoline:

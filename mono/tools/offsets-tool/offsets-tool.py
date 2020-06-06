@@ -10,6 +10,7 @@ import clang.cindex
 IOS_DEFINES = ["HOST_DARWIN", "TARGET_MACH", "MONO_CROSS_COMPILE", "USE_MONO_CTX", "_XOPEN_SOURCE"]
 ANDROID_DEFINES = ["HOST_ANDROID", "MONO_CROSS_COMPILE", "USE_MONO_CTX", "BIONIC_IOCTL_NO_SIGNEDNESS_OVERLOAD"]
 LINUX_DEFINES = ["HOST_LINUX", "MONO_CROSS_COMPILE", "USE_MONO_CTX"]
+HORIZON_DEFINES = ["HOST_HORIZON", "MONO_CROSS_COMPILE", "USE_MONO_CTX"]
 
 class Target:
 	def __init__(self, arch, platform, others):
@@ -86,7 +87,14 @@ class OffsetsTool:
 			self.sys_includes = [args.emscripten_path + "/system/include", args.emscripten_path + "/system/include/libc", args.emscripten_path + "/system/lib/libc/musl/arch/emscripten"]
 			self.target = Target ("TARGET_WASM", None, [])
 			self.target_args += ["-target", args.abi]
-
+		elif "horizon" in args.abi:
+			require_sysroot(args)
+			self.target = Target ("TARGET_ARM64", "TARGET_HORIZON", HORIZON_DEFINES)
+			self.target_args += ["-target", "arm64"]
+			self.target_args += ["-isysroot", args.sysroot]
+			self.target_args += ["-isystem", args.sysroot + "/include"]
+			# Sorry.
+			self.target_args += ["-D__DEVKITA64__"]
 		# Linux
 		elif "arm-linux-gnueabihf" == args.abi:
 			self.target = Target ("TARGET_ARM", None, ["ARM_FPU_VFP", "HAVE_ARMV5", "HAVE_ARMV6", "HAVE_ARMV7"] + LINUX_DEFINES)
