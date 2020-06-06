@@ -143,6 +143,8 @@ ikvm_native=yes
 
 host_win32=no
 target_win32=no
+host_horizon=no
+target_horizon=no
 target_wasm=no
 platform_android=no
 platform_tizen=no
@@ -550,6 +552,11 @@ case "$host" in
 		RID="aix-ppc64"
 		CORETARGETS="-p:TargetsUnix=true"
 		;;
+	aarch64-none-elf)
+		host_horizon=yes
+		support_boehm=no
+		with_gc=sgen
+		;;
 	*)
 		AC_MSG_WARN([*** Please add $host to configure.ac checks!])
 		;;
@@ -557,12 +564,28 @@ esac
 
 AC_MSG_RESULT(ok)
 
+case "$target" in
+	aarch64-none-elf)
+		target_horizon=yes
+		support_boehm=no
+		with_gc=sgen
+		;;
+esac
+
 if test x$need_link_unlink = xyes; then
    AC_DEFINE(NEED_LINK_UNLINK, 1, [Define if Unix sockets cannot be created in an anonymous namespace])
 fi
 
 if test x$host_win32 = xyes; then
    AC_DEFINE(HOST_WIN32, 1, [Host Platform is Win32])
+fi
+
+if test x$host_horizon = xyes; then
+   AC_DEFINE(HOST_HORIZON, 1, [Host Platform is Horizon])
+fi
+
+if test x$target_horizon = xyes; then
+   AC_DEFINE(TARGET_HORIZON, 1, [Target Platform is Horizon])
 fi
 
 if test x$target_win32 = xyes; then
@@ -580,6 +603,8 @@ AC_DEFINE(HAVE_UWP_WINAPI_SUPPORT, 0, [Don't use UWP Windows API support])
 AC_SUBST(extra_runtime_ldflags)
 AM_CONDITIONAL(HOST_WIN32, test x$host_win32 = xyes)
 AM_CONDITIONAL(TARGET_WIN32, test x$target_win32 = xyes)
+AM_CONDITIONAL(HOST_HORIZON, test x$host_horizon = xyes)
+AM_CONDITIONAL(TARGET_HORIZON, test x$target_horizon = xyes)
 AM_CONDITIONAL(HOST_LINUX, echo x$target_os | grep -q linux)
 AM_CONDITIONAL(HOST_DARWIN, test x$host_darwin = xyes)
 AM_CONDITIONAL(HOST_SIGPOSIX, test x$use_sigposix = xyes)

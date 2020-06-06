@@ -474,6 +474,18 @@ typedef struct ucontext {
 	#define UCONTEXT_REG_SP(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_gpregs.gp_sp)
 	#define UCONTEXT_REG_R0(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_gpregs.gp_x [ARMREG_R0])
 	#define UCONTEXT_GREGS(ctx) (&(((ucontext_t*)(ctx))->uc_mcontext.mc_gpregs.gp_x))
+#elif defined(__SWITCH__)
+	// no ucontext
+	typedef struct fake_ucontext {
+		uint64_t pc;
+		uint64_t sp;
+		uint64_t gregs[31];
+	} fake_ucontext;
+
+	#define UCONTEXT_REG_PC(ctx) (((fake_ucontext*)(ctx))->pc)
+	#define UCONTEXT_REG_SP(ctx) (((fake_ucontext*)(ctx))->sp)
+	#define UCONTEXT_REG_R0(ctx) (((fake_ucontext*)(ctx))->gregs[0])
+	#define UCONTEXT_GREGS(ctx) (((fake_ucontext*)(ctx))->gregs)
 #else
 #include <ucontext.h>
 	#define UCONTEXT_REG_PC(ctx) (((ucontext_t*)(ctx))->uc_mcontext.pc)

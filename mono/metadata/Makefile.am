@@ -44,7 +44,6 @@ else
 assembliesdir = $(exec_prefix)/lib
 confdir = $(sysconfdir)
 unix_sources = \
-	console-unix.c \
 	w32mutex-unix.c \
 	w32semaphore-unix.c \
 	w32event-unix.c \
@@ -59,6 +58,12 @@ unix_sources = \
 	w32file-unix-glob.c \
 	w32file-unix-glob.h \
 	w32error-unix.c
+
+if HOST_HORIZON
+unix_sources += console-null.c
+else
+unix_sources += console-unix.c
+endif
 
 platform_sources = $(unix_sources)
 endif

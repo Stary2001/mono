@@ -21,6 +21,13 @@
 
 #include "config.h"
 
+#include <stdint.h>
+#ifndef SSIZE_MAX
+#ifdef SIZE_MAX
+#define SSIZE_MAX ((SIZE_MAX) >> 1)
+#endif
+#endif
+
 #ifdef HAVE_SGEN_GC
 
 #include <string.h>

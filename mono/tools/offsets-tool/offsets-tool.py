@@ -9,6 +9,8 @@ import clang.cindex
 
 IOS_DEFINES = ["HOST_DARWIN", "TARGET_MACH", "MONO_CROSS_COMPILE", "USE_MONO_CTX", "_XOPEN_SOURCE"]
 ANDROID_DEFINES = ["HOST_ANDROID", "MONO_CROSS_COMPILE", "USE_MONO_CTX", "BIONIC_IOCTL_NO_SIGNEDNESS_OVERLOAD"]
+LINUX_DEFINES = ["HOST_LINUX", "MONO_CROSS_COMPILE", "USE_MONO_CTX"]
+HORIZON_DEFINES = ["HOST_HORIZON", "MONO_CROSS_COMPILE", "USE_MONO_CTX"]
 
 class Target:
 	def __init__(self, arch, platform, others):
@@ -83,6 +85,40 @@ class OffsetsTool:
 			self.sys_includes = [args.emscripten_path + "/system/include", args.emscripten_path + "/system/include/libc", args.emscripten_path + "/system/lib/libc/musl/arch/emscripten"]
 			self.target = Target ("TARGET_WASM", None, [])
 			self.target_args += ["-target", args.abi]
+		elif "horizon" in args.abi:
+			require_sysroot(args)
+			self.target = Target ("TARGET_ARM64", "TARGET_HORIZON", HORIZON_DEFINES)
+			self.target_args += ["-target", "arm64"]
+			self.target_args += ["-isysroot", args.sysroot]
+			self.target_args += ["-isystem", args.sysroot + "/include"]
+			# Sorry.
+			self.target_args += ["-D__DEVKITA64__"]
+		# Linux
+		elif "arm-linux-gnueabihf" == args.abi:
+			self.target = Target ("TARGET_ARM", None, ["ARM_FPU_VFP", "HAVE_ARMV5", "HAVE_ARMV6", "HAVE_ARMV7"] + LINUX_DEFINES)
+			self.target_args += ["--target=arm---gnueabihf"]
+			self.target_args += ["-I", args.sysroot + "/include"]
+
+			if args.include_prefix:
+				if not os.path.isdir (args.include_prefix):
+					print ("provided path via --include-prefix (\"" + args.include_prefix + "\") doesn't exist.", file=sys.stderr)
+					sys.exit (1)
+				self.target_args += ["-I", args.include_prefix + "/include"]
+				self.target_args += ["-I", args.include_prefix + "/include-fixed"]
+			else:
+				found = False
+				for i in range (11, 5, -1):
+					prefix = "/usr/lib/gcc-cross/" + args.abi +  "/" + str (i)
+					if not os.path.isdir (prefix):
+						continue
+					found = True
+					self.target_args += ["-I", prefix + "/include"]
+					self.target_args += ["-I", prefix + "/include-fixed"]
+					break
+
+				if not found:
+					print ("could not find a valid include path for target, provide one via --include-prefix=<path>.", file=sys.stderr)
+					sys.exit (1)
 
 		# iOS
 		elif "arm-apple-darwin10" == args.abi:

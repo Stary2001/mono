@@ -50,12 +50,17 @@ win32_sources = \
 
 platform_sources = $(win32_sources)
 else
+if HOST_HORIZON
+horizon_sources = os-event-unix.c
+platform_sources = $(horizon_sources)
+else
 unix_sources = \
 	dlmalloc.h      	\
 	dlmalloc.c      	\
 	os-event-unix.c
 
 platform_sources = $(unix_sources)
+endif
 endif
 
 monoutils_sources = \
